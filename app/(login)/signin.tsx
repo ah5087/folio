@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
@@ -21,7 +21,7 @@ export default function SignIn() {
         }}
       />
       <Text style={styles.registerText}>don't have an account?</Text>
-      <Button title="register" onPress={() => router.push("register")} />
+      <Button title="register" onPress={() => router.push("(register)/name")} />
     </View>
   );
 }
