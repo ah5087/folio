@@ -4,16 +4,17 @@ const mongoose = require("mongoose");
 const app = express();
 const port = 3000;
 
-// Middleware
+// middleware
 app.use(bodyParser.json());
 
-// Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/yourdatabase", {
+// connect to MongoDB Atlas
+const uri =
+  "mongodb+srv://alice:ZipgbkVVGT1Ibqwr@folio-app.mwg2gz2.mongodb.net/yourdatabase?retryWrites=true&w=majority";
+mongoose.connect(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-// User Schema
 const userSchema = new mongoose.Schema({
   username: String,
   password: String,
@@ -21,7 +22,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// Registration Endpoint
+// registration endpoint
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
 

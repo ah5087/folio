@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
-import InputField from "@/components/InputField";
+import Input from "@/components/Input";
 import { useRouter } from "expo-router";
 import Button from "@/components/Button";
 
@@ -34,12 +34,12 @@ export default function UserPass() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>set your login information</Text>
-      <InputField
+      <Input
         placeholder="username"
         value={username}
         onChangeText={setUsername}
       />
-      <InputField
+      <Input
         placeholder="password"
         value={password}
         onChangeText={setPassword}
