@@ -1,35 +1,49 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
+const axios = require("axios");
 const app = express();
 const port = 3000;
 
-// middleware
+const TMDB_API_KEY = "573ede485fbba2b292c6ad3c5daffbac";
+const GOOGLE_BOOKS_API_KEY = "AIzaSyB4RFB_VSZuR_fXwkwq15UcROQZ-oi6xR0";
+
+// Middleware
 app.use(bodyParser.json());
 
-// connect to MongoDB Atlas
-const uri =
-  "mongodb+srv://alice:ZipgbkVVGT1Ibqwr@folio-app.mwg2gz2.mongodb.net/yourdatabase?retryWrites=true&w=majority";
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+// Fetch Books
+app.get("/books", async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&key=${GOOGLE_BOOKS_API_KEY}`
+    );
+    res.send(data.items);
+  } catch (error) {
+    res.status(500).send({ error: "Failed to fetch books" });
+  }
 });
 
-const userSchema = new mongoose.Schema({
-  username: String,
-  password: String,
+// Fetch Movies
+app.get("/movies", async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}`
+    );
+    res.send(data.results);
+  } catch (error) {
+    res.status(500).send({ error: "Failed to fetch movies" });
+  }
 });
 
-const User = mongoose.model("User", userSchema);
-
-// registration endpoint
-app.post("/register", async (req, res) => {
-  const { username, password } = req.body;
-
-  const user = new User({ username, password });
-  await user.save();
-
-  res.status(201).send("User registered");
+// Fetch TV Shows
+app.get("/tvshows", async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      `https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_API_KEY}`
+    );
+    res.send(data.results);
+  } catch (error) {
+    res.status(500).send({ error: "Failed to fetch TV shows" });
+  }
 });
 
 app.listen(port, () => {
