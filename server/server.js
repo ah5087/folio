@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const axios = require("axios");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const app = express();
 const port = 3000;
 
@@ -9,6 +11,45 @@ const GOOGLE_BOOKS_API_KEY = "AIzaSyB4RFB_VSZuR_fXwkwq15UcROQZ-oi6xR0";
 
 // Middleware
 app.use(bodyParser.json());
+
+// Connect to MongoDB
+mongoose.connect("mongodb://localhost:27017/yourdatabase", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+// User Schema
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+  profilePicture: String,
+});
+
+const User = mongoose.model("User", userSchema);
+
+// Registration Endpoint
+app.post("/register", async (req, res) => {
+  const { username, password, profilePicture } = req.body;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = new User({ username, password: hashedPassword, profilePicture });
+  await user.save();
+
+  res.status(201).send("User registered");
+});
+
+// Login Endpoint
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  const user = await User.findOne({ username });
+
+  if (user && (await bcrypt.compare(password, user.password))) {
+    res.status(200).send("Login successful");
+  } else {
+    res.status(401).send("Invalid username or password");
+  }
+});
 
 // Fetch Books
 app.get("/books", async (req, res) => {
